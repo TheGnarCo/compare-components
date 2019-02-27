@@ -180,16 +180,6 @@ class App extends React.Component {
     </div>
   )
 
-  componentCountStuff = () => (
-    <div>
-      <div style={{ display: "inline-block", width: "500px" }}>
-        <h2 style={{ display: "inline" }}>How many props are we passing? {propSizes[this.state.propCountIndex]}</h2>
-      </div>
-      <span>
-      </span>
-    </div>
-  )
-
   componentComplexityStuff = () => (
     <div>
       <div style={{ display: "inline-block", width: "500px" }}>
