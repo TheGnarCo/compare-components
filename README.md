@@ -14,3 +14,7 @@ render complexity overcomes the time taken to shallow compare props
 * Toggle the purity and functional-ness of components
 * Toggle whether components receive the same props on successive renders or if a passed prop is
 mutated to trigger re-renders in pure/memoized components
+
+Just clone, install with `yarn` or `npm`, and run `yarn start` or `npm start` to mess around.
+If you want more reliable data, do `yarn build` or `npm build` and the host the result using
+https://www.npmjs.com/package/serve or python simple HTTP server or whatever you'd like.
