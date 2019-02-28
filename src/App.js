@@ -44,8 +44,8 @@ class App extends React.Component {
         keyPrefix = "memo";
       }
       else {
-        ComponentToRender = Fst;
-        keyPrefix = "fst";
+        ComponentToRender = Fsc;
+        keyPrefix = "fsc";
       }
     }
     else {
@@ -245,9 +245,9 @@ class Impure extends React.Component {
   }
 }
 
-const Fst = ({ complexity, prop }) => {
+const Fsc = ({ complexity, prop }) => {
   const factor = calculateNthPrime(complexity);
-  console.log("render fst");
+  console.log("render fsc");
   return <div>{factor} - {prop}</div>;
 };
 
