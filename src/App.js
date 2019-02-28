@@ -1,7 +1,7 @@
 import React from 'react';
 
-const propSizes = [1, 10, 50, 100, 250, 500, 750, 1000];
-const propArray = propSizes.map(size => {
+const sizes = [1, 10, 50, 100, 250, 500, 750, 1000];
+const propArray = sizes.map(size => {
   const propsOfSize = {};
   for (let i = 0; i < size; i += 1) {
     propsOfSize[`prop${i}`] = i;
@@ -12,12 +12,12 @@ const propArray = propSizes.map(size => {
 class App extends React.Component {
   state = {
     count: 0,
-    componentComplexity: 4,
-    componentCount: 50,
-    functional: true,
+    componentComplexityIndex: 0,
+    componentCountIndex: 0,
+    functional: false,
     pass: true,
     propCountIndex: 0,
-    pure: true,
+    pure: false,
     startRender: undefined,
     stopRender: undefined,
     timing: false,
@@ -60,11 +60,11 @@ class App extends React.Component {
     }
 
     const listItems = [];
-    for (let i = 0; i < this.state.componentCount; i += 1) {
+    for (let i = 0; i < sizes[this.state.componentCountIndex]; i += 1) {
       listItems.push(<ComponentToRender
         key={`${keyPrefix}${i}`}
         prop={prop}
-        complexity={this.state.componentComplexity}
+        complexity={sizes[this.state.componentComplexityIndex]}
         {...otherProps}
       />);
     }
@@ -83,19 +83,19 @@ class App extends React.Component {
   });
 
   increaseComponentCount = () => this.setState({
-    componentCount: this.state.componentCount < 10000
-      ? this.state.componentCount + 50
-      : this.state.componentCount
+    componentCountIndex: this.state.componentCountIndex < sizes.length - 1
+      ? this.state.componentCountIndex + 1
+      : this.state.componentCountIndex
     });
 
   decreaseComponentCount = () => this.setState({
-    componentCount: this.state.componentCount > 0
-      ? this.state.componentCount - 50
-      : this.state.componentCount
+    componentCountIndex: this.state.componentCountIndex > 0
+      ? this.state.componentCountIndex - 1
+      : this.state.componentCountIndex
     });
 
   increasePropsPassed = () => this.setState({
-    propCountIndex: this.state.propCountIndex < propSizes.length - 1
+    propCountIndex: this.state.propCountIndex < sizes.length - 1
       ? this.state.propCountIndex + 1
       : this.state.propCountIndex
     });
@@ -107,15 +107,15 @@ class App extends React.Component {
     });
 
   increaseComponentComplexity = () => this.setState({
-    componentComplexity: this.state.componentComplexity < 10000
-      ? this.state.componentComplexity + 50
-      : this.state.componentComplexity
+    componentComplexityIndex: this.state.componentComplexityIndex < sizes.length - 1
+      ? this.state.componentComplexityIndex + 1
+      : this.state.componentComplexityIndex
     });
 
   decreaseComponentComplexity = () => this.setState({
-    componentComplexity: this.state.componentComplexity > 0
-      ? this.state.componentComplexity - 50
-      : this.state.componentComplexity
+    componentComplexityIndex: this.state.componentComplexityIndex > 0
+      ? this.state.componentComplexityIndex - 1
+      : this.state.componentComplexityIndex
     });
 
   componentHeader = () => {
@@ -138,7 +138,7 @@ class App extends React.Component {
     }
     return (
       <div style={{ display: "inline-block", width: "500px" }}>
-        <h2 style={{ display: "inline" }}>Rendering {`${this.state.componentCount} ${text}`}</h2>
+        <h2 style={{ display: "inline" }}>Rendering {`${sizes[this.state.componentCountIndex]} ${text}`}</h2>
       </div>
     );
   }
@@ -171,7 +171,7 @@ class App extends React.Component {
   propCountStuff = () => (
     <div>
       <div style={{ display: "inline-block", width: "500px" }}>
-        <h2 style={{ display: "inline" }}>How many props are we passing? {propSizes[this.state.propCountIndex]}</h2>
+        <h2 style={{ display: "inline" }}>How many props are we passing? {sizes[this.state.propCountIndex]}</h2>
       </div>
       <span>
         <button onClick={this.increasePropsPassed}>Increase Props Passed</button>
@@ -183,7 +183,7 @@ class App extends React.Component {
   componentComplexityStuff = () => (
     <div>
       <div style={{ display: "inline-block", width: "500px" }}>
-        <h2 style={{ display: "inline" }}>Calculating the {this.state.componentComplexity}th prime</h2>
+        <h2 style={{ display: "inline" }}>Calculating the {sizes[this.state.componentComplexityIndex]}th prime</h2>
       </div>
       <span>
         <button onClick={this.increaseComponentComplexity}>Increase Component Complexity</button>

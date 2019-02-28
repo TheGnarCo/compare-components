@@ -18,3 +18,7 @@ mutated to trigger re-renders in pure/memoized components
 Just clone, install with `yarn` or `npm`, and run `yarn start` or `npm start` to mess around.
 If you want more reliable data, do `yarn build` or `npm build` and then host the result using
 https://www.npmjs.com/package/serve or python simple HTTP server or whatever you'd like.
+
+### TODO
+Comments
+Breaking components into separate files
