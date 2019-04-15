@@ -1,16 +1,26 @@
-import React from 'react';
+import React from 'react'
 
-const sizes = [1, 10, 50, 100, 250, 500, 750, 1000];
+import { ComponentComplexityInfo } from './ComponentComplexityInfo'
+import { ComponentTypeInfo } from './ComponentTypeInfo'
+import { Fsc } from './Fsc'
+import { Impure } from './Impure'
+import { Memo } from './Memo'
+import { PassingPropsInfo } from './PassingPropsInfo'
+import { PropCountInfo } from './PropCountInfo'
+import { Pure } from './Pure'
+import { sizes } from './utils'
+
 const propArray = sizes.map(size => {
-  const propsOfSize = {};
+  const propsOfSize = {}
   for (let i = 0; i < size; i += 1) {
-    propsOfSize[`prop${i}`] = i;
+    propsOfSize[`prop${i}`] = i
   }
-  return propsOfSize;
-});
+  return propsOfSize
+})
 
 class App extends React.Component {
   state = {
+    averageRenderTime: undefined,
     count: 0,
     componentComplexityIndex: 0,
     componentCountIndex: 0,
@@ -18,243 +28,150 @@ class App extends React.Component {
     pass: true,
     propCountIndex: 0,
     pure: false,
+    renderTimes: [],
     startRender: undefined,
-    stopRender: undefined,
+    target: 0,
     timing: false,
-  };
+  }
 
   componentDidUpdate() {
     if (this.state.timing) {
-      this.setState({
-        timing: false,
-        stopRender: performance.now(),
-      });
+      const stopRender = performance.now()
+      const renderTime = stopRender - this.state.startRender
+      const renderTimes = [...this.state.renderTimes, renderTime]
+
+      if (this.state.count < this.state.target) {
+        this.recordRender({ renderTimes })
+      } else {
+        const averageRenderTime =
+          renderTimes.reduce((sum, n) => sum + n, 0) / 10
+        this.setState({
+          averageRenderTime,
+          timing: false,
+        })
+      }
     }
   }
 
   renderStuff = () => {
-    const prop = this.state.pass ? this.state.count : "a";
-    const otherProps = propArray[this.state.propCountIndex];
-    let ComponentToRender;
-    let keyPrefix;
+    const prop = this.state.pass ? this.state.count : 'a'
+    const otherProps = propArray[this.state.propCountIndex]
+    let ComponentToRender
+    let keyPrefix
 
     if (this.state.functional) {
       if (this.state.pure) {
-        ComponentToRender = Memo;
-        keyPrefix = "memo";
+        ComponentToRender = Memo
+        keyPrefix = 'memo'
+      } else {
+        ComponentToRender = Fsc
+        keyPrefix = 'fsc'
       }
-      else {
-        ComponentToRender = Fsc;
-        keyPrefix = "fsc";
-      }
-    }
-    else {
+    } else {
       if (this.state.pure) {
-        ComponentToRender = Pure;
-        keyPrefix = "pure";
-      }
-      else {
-        ComponentToRender = Impure;
-        keyPrefix = "impure";
+        ComponentToRender = Pure
+        keyPrefix = 'pure'
+      } else {
+        ComponentToRender = Impure
+        keyPrefix = 'impure'
       }
     }
 
-    const listItems = [];
+    const listItems = []
     for (let i = 0; i < sizes[this.state.componentCountIndex]; i += 1) {
-      listItems.push(<ComponentToRender
-        key={`${keyPrefix}${i}`}
-        prop={prop}
-        complexity={sizes[this.state.componentComplexityIndex]}
-        {...otherProps}
-      />);
+      listItems.push(
+        <ComponentToRender
+          key={`${keyPrefix}${i}`}
+          prop={prop}
+          complexity={sizes[this.state.componentComplexityIndex]}
+          {...otherProps}
+        />,
+      )
     }
 
-    return <div>{listItems}</div>;
+    return <div>{listItems}</div>
   }
 
-  toggleFunctional = () => this.setState({ functional: !this.state.functional });
-  togglePass = () => this.setState({ pass: !this.state.pass });
-  togglePure = () => this.setState({ pure: !this.state.pure });
-  causeRender = () => this.setState({
-    count: this.state.count + 1,
-    startRender: performance.now(),
-    stopRender: undefined,
-    timing: true,
-  });
+  increaseStateItem = item =>
+    this.setState({
+      [item]:
+        this.state[item] < sizes.length - 1
+          ? this.state[item] + 1
+          : this.state[item],
+    })
 
-  increaseComponentCount = () => this.setState({
-    componentCountIndex: this.state.componentCountIndex < sizes.length - 1
-      ? this.state.componentCountIndex + 1
-      : this.state.componentCountIndex
-    });
+  decreaseStateItem = item =>
+    this.setState({
+      [item]: this.state[item] > 0 ? this.state[item] - 1 : this.state[item],
+    })
 
-  decreaseComponentCount = () => this.setState({
-    componentCountIndex: this.state.componentCountIndex > 0
-      ? this.state.componentCountIndex - 1
-      : this.state.componentCountIndex
-    });
+  increaseComponentCount = () => this.increaseStateItem('componentCountIndex')
+  decreaseComponentCount = () => this.decreaseStateItem('componentCountIndex')
 
-  increasePropsPassed = () => this.setState({
-    propCountIndex: this.state.propCountIndex < sizes.length - 1
-      ? this.state.propCountIndex + 1
-      : this.state.propCountIndex
-    });
+  increasePropsPassed = () => this.increaseStateItem('propCountIndex')
+  decreasePropsPassed = () => this.decreaseStateItem('propCountIndex')
 
-  decreasePropsPassed = () => this.setState({
-    propCountIndex: this.state.propCountIndex > 0
-      ? this.state.propCountIndex - 1
-      : this.state.propCountIndex
-    });
+  increaseComponentComplexity = () =>
+    this.increaseStateItem('componentComplexityIndex')
+  decreaseComponentComplexity = () =>
+    this.decreaseStateItem('componentComplexityIndex')
 
-  increaseComponentComplexity = () => this.setState({
-    componentComplexityIndex: this.state.componentComplexityIndex < sizes.length - 1
-      ? this.state.componentComplexityIndex + 1
-      : this.state.componentComplexityIndex
-    });
+  toggleFunctional = () => this.setState({ functional: !this.state.functional })
+  togglePass = () => this.setState({ pass: !this.state.pass })
+  togglePure = () => this.setState({ pure: !this.state.pure })
 
-  decreaseComponentComplexity = () => this.setState({
-    componentComplexityIndex: this.state.componentComplexityIndex > 0
-      ? this.state.componentComplexityIndex - 1
-      : this.state.componentComplexityIndex
-    });
+  causeRender = () =>
+    this.recordRender({
+      averageRenderTime: undefined,
+      count: this.state.count,
+      renderTimes: [],
+      target: this.state.count + 10,
+    })
 
-  componentHeader = () => {
-    let text;
-    if (this.state.functional) {
-      if (this.state.pure) {
-        text = "Memoized FSCs";
-      }
-      else {
-        text = "FSCs";
-      }
-    }
-    else {
-      if (this.state.pure) {
-        text = "Pure Components";
-      }
-      else {
-        text = "Components";
-      }
-    }
-    return (
-      <div style={{ display: "inline-block", width: "500px" }}>
-        <h2 style={{ display: "inline" }}>Rendering {`${sizes[this.state.componentCountIndex]} ${text}`}</h2>
-      </div>
-    );
-  }
+  recordRender = otherState =>
+    this.setState({
+      count: this.state.count + 1,
+      startRender: performance.now(),
+      timing: true,
+      ...otherState,
+    })
 
-  componentTypeStuff = () => (
-    <div>
-      <span>
-        {this.componentHeader()}
-        <span>
-          <button onClick={this.toggleFunctional}>Toggle Functional</button>
-          <button onClick={this.togglePure}>Toggle Pure/Memo</button>
-          <button onClick={this.increaseComponentCount}>More Components</button>
-          <button onClick={this.decreaseComponentCount}>Less Components</button>
-        </span>
-      </span>
-    </div>
-  );
-
-  passingPropsStuff = () => (
-    <div>
-      <div style={{ display: "inline-block", width: "500px" }}>
-        <h2 style={{ display: "inline" }}>Are we changing any props? {this.state.pass ? "Yes" : "No"}</h2>
-      </div>
-      <span>
-        <button onClick={this.togglePass}>Toggle Prop Mutation</button>
-      </span>
-    </div>
-  )
-
-  propCountStuff = () => (
-    <div>
-      <div style={{ display: "inline-block", width: "500px" }}>
-        <h2 style={{ display: "inline" }}>How many props are we passing? {sizes[this.state.propCountIndex]}</h2>
-      </div>
-      <span>
-        <button onClick={this.increasePropsPassed}>Increase Props Passed</button>
-        <button onClick={this.decreasePropsPassed}>Decrease Props Passed</button>
-      </span>
-    </div>
-  )
-
-  componentComplexityStuff = () => (
-    <div>
-      <div style={{ display: "inline-block", width: "500px" }}>
-        <h2 style={{ display: "inline" }}>Calculating the {sizes[this.state.componentComplexityIndex]}th prime</h2>
-      </div>
-      <span>
-        <button onClick={this.increaseComponentComplexity}>Increase Component Complexity</button>
-        <button onClick={this.decreaseComponentComplexity}>Decrease Component Complexity</button>
-      </span>
-    </div>
-  )
-
-  renderTimingStuff = () => this.state.stopRender
-    ? <h2>It took {(this.state.stopRender - this.state.startRender).toPrecision(5)}ms</h2>
-    : null;
+  renderTimingStuff = () =>
+    this.state.averageRenderTime ? (
+      <h2>It took {this.state.averageRenderTime} ms</h2>
+    ) : null
 
   render() {
     return (
       <div>
-        {this.componentTypeStuff()}
-        {this.passingPropsStuff()}
-        {this.propCountStuff()}
-        {this.componentComplexityStuff()}
-        <button style={{ fontSize: "40px" }}onClick={this.causeRender}>Render</button>
+        <ComponentTypeInfo
+          componentCountIndex={this.state.componentCountIndex}
+          decreaseComponentCount={this.decreaseComponentCount}
+          functional={this.state.functional}
+          increaseComponentCount={this.increaseComponentCount}
+          pure={this.state.pure}
+          toggleFunctional={this.toggleFunctional}
+          togglePure={this.togglePure}
+        />
+        <PassingPropsInfo pass={this.state.pass} togglePass={this.togglePass} />
+        <PropCountInfo
+          decreasePropsPassed={this.decreasePropsPassed}
+          increasePropsPassed={this.increasePropsPassed}
+          propCountIndex={this.state.propCountIndex}
+        />
+        <ComponentComplexityInfo
+          componentComplexityIndex={this.state.componentComplexityIndex}
+          decreaseComponentComplexity={this.decreaseComponentComplexity}
+          increaseComponentComplexity={this.increaseComponentComplexity}
+        />
+        <button style={{ fontSize: '40px' }} onClick={this.causeRender}>
+          Render
+        </button>
         {this.renderTimingStuff()}
         {this.renderStuff()}
       </div>
-    );
+    )
   }
 }
 
-function slowIsPrime(p) {
-  let d = 2;
-  while (d < p - 1) {
-    if (p % d === 0) return false;
-    d += 1;
-  }
-  return true;
-}
-
-function calculateNthPrime(n) {
-  let p = 2;
-  while (n > 1) {
-    p += 1;
-    if (slowIsPrime(p)) n -= 1;
-  }
-  return p;
-}
-
-class Pure extends React.PureComponent {
-  render() {
-    const factor = calculateNthPrime(this.props.complexity);
-    console.log("render pure");
-    return <div>{factor} - {this.props.prop}</div>;
-  }
-}
-
-class Impure extends React.Component {
-  render() {
-    const factor = calculateNthPrime(this.props.complexity);
-    console.log("render impure");
-    return <div>{factor} - {this.props.prop}</div>;
-  }
-}
-
-const Fsc = ({ complexity, prop }) => {
-  const factor = calculateNthPrime(complexity);
-  console.log("render fsc");
-  return <div>{factor} - {prop}</div>;
-};
-
-const Memo = React.memo(({ complexity, prop }) => {
-  const factor = calculateNthPrime(complexity);
-  console.log("render memo");
-  return <div>{factor} - {prop}</div>;
-});
-
-export default App;
+export default App
