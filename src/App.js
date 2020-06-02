@@ -10,7 +10,7 @@ import { PropCountInfo } from './PropCountInfo'
 import { Pure } from './Pure'
 import { sizes } from './utils'
 
-const propArray = sizes.map(size => {
+const propArray = sizes.map((size) => {
   const propsOfSize = {}
   for (let i = 0; i < size; i += 1) {
     propsOfSize[`prop${i}`] = i
@@ -92,7 +92,7 @@ class App extends React.Component {
     return <div>{listItems}</div>
   }
 
-  increaseStateItem = item =>
+  increaseStateItem = (item) =>
     this.setState({
       [item]:
         this.state[item] < sizes.length - 1
@@ -100,7 +100,7 @@ class App extends React.Component {
           : this.state[item],
     })
 
-  decreaseStateItem = item =>
+  decreaseStateItem = (item) =>
     this.setState({
       [item]: this.state[item] > 0 ? this.state[item] - 1 : this.state[item],
     })
@@ -128,7 +128,7 @@ class App extends React.Component {
       target: this.state.count + 10,
     })
 
-  recordRender = otherState =>
+  recordRender = (otherState) =>
     this.setState({
       count: this.state.count + 1,
       startRender: performance.now(),
