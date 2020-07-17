@@ -17,3 +17,17 @@ export function calculateNthPrime(n) {
 }
 
 export const sizes = [1, 10, 50, 100, 250, 500, 750, 1000]
+
+export const propArray = sizes.map((size) => {
+  const propsOfSize = {}
+  for (let i = 0; i < size; i += 1) {
+    propsOfSize[`prop${i}`] = i
+  }
+  return propsOfSize
+})
+
+export const safeIncrement = (current) =>
+  Math.min(current + 1, sizes.length - 1)
+export const safeDecrement = (current) => Math.max(current - 1, 0)
+
+export const toggle = (current) => !current
