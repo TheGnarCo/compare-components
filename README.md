@@ -1,6 +1,13 @@
+# THIS REPO IS ARCHIVED
+
+This was created for https://blog.thegnar.co/react-component-comparison.
+The guidance there is largely outdated.
+
+## Compare COmponents
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-This was to test the general performance structure of `React.Component`, `React.PureComponent`,
+To test the general performance of `React.Component`, `React.PureComponent`,
 Functional Stateless Components (FSCs) and `React.memo`ized FSCs.
 
 Users can toggle various settings in a terribly built UI to compare rendering times in a way that
