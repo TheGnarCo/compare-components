@@ -22,3 +22,11 @@ https://www.npmjs.com/package/serve or python simple HTTP server or whatever you
 ### TODO
 Comments
 Breaking components into separate files
+
+## About The Gnar Company
+
+<a href="https://www.thegnar.com/">
+    <img alt="The Gnar Company" src="https://avatars0.githubusercontent.com/u/17011419?s=100&v=4" />
+</a>
+
+If you’re ready to dream it, we’re ready to build it. The Gnar is a custom software company ready to tackle your biggest challenges. Visit [The Gnar Company website](https://www.thegnar.com/) to learn more about us or [contact us](https://www.thegnar.com/contact) to see how we can help design and develop your product.
